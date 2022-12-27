@@ -41,7 +41,7 @@ double Integrate2D_Trapezoid(double ax, double bx, double ay, double by, int nx,
 template <typename F>
 double Integrate2D_Trapezoid_Parallel(double ax, double bx, double ay,
                                       double by, int nx, int ny, F f) {
-  int np, pid;  // np - number of the processes, pid - it's identifier
+  int np, pid;  // np - number of the processes,  pid - it's identifier
   MPI_Status status;
   MPI_Comm_rank(MPI_COMM_WORLD, &pid);
   MPI_Comm_size(MPI_COMM_WORLD, &np);
