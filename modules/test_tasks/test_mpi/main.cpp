@@ -4,113 +4,99 @@
 #include "./ops_mpi.h"
 #include <gtest-mpi-listener.hpp>
 
-TEST(Parallel_Operations_MPI, Test_Minimum1) {
-    std::vector<std::vector<int>> p = CreateMatrix(6, 6);
-
-
-    int a, b;
-
+TEST(Parallel_Operations_MPI, Test_Sum) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    std::vector<int> global_vec;
+    const int count_size_vector = 120;
+
     if (rank == 0) {
-
-        a = getSequentialOperations(p);
-
+        global_vec = getRandomVector(count_size_vector);
     }
 
-    b = getParallelOperations(p);
+    int global_sum = getParallelOperations(global_vec, count_size_vector, "+");
 
     if (rank == 0) {
-        ASSERT_EQ(a, b);
+        int reference_sum = getSequentialOperations(global_vec, "+");
+        ASSERT_EQ(reference_sum, global_sum);
     }
 }
 
-TEST(Parallel_Operations_MPI, Test_Minimum2) {
-    std::vector<std::vector<int>> p = CreateMatrix(50, 50);
-
-
-    int a, b;
-
+TEST(Parallel_Operations_MPI, Test_Diff) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    std::vector<int> global_vec;
+    const int count_size_vector = 120;
+
     if (rank == 0) {
-
-        a = getSequentialOperations(p);
-
+        global_vec = getRandomVector(count_size_vector);
     }
 
-    b = getParallelOperations(p);
+    int global_diff = getParallelOperations(global_vec, count_size_vector, "-");
 
     if (rank == 0) {
-        ASSERT_EQ(a, b);
+        int reference_diff = getSequentialOperations(global_vec, "-");
+        ASSERT_EQ(reference_diff, global_diff);
     }
 }
 
-TEST(Parallel_Operations_MPI, Test_Minimum3) {
-    std::vector<std::vector<int>> p = CreateMatrix(100, 100);
-
-
-    int a, b;
-
+TEST(Parallel_Operations_MPI, Test_Diff_2) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    std::vector<int> global_vec;
+    const int count_size_vector = 120;
+
     if (rank == 0) {
-
-        a = getSequentialOperations(p);
-
+        global_vec = getRandomVector(count_size_vector);
     }
 
-    b = getParallelOperations(p);
+    int global_diff = getParallelOperations(global_vec, count_size_vector, "-");
 
     if (rank == 0) {
-        ASSERT_EQ(a, b);
+        int reference_diff = getSequentialOperations(global_vec, "-");
+        ASSERT_EQ(reference_diff, global_diff);
     }
 }
 
-TEST(Parallel_Operations_MPI, Test_Minimum4) {
-    std::vector<std::vector<int>> p = CreateMatrix(200, 100);
-
-
-    int a, b;
-
+TEST(Parallel_Operations_MPI, Test_Max) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    std::vector<int> global_vec;
+    const int count_size_vector = 120;
+
     if (rank == 0) {
-
-        a = getSequentialOperations(p);
-
+        global_vec = getRandomVector(count_size_vector);
     }
 
-    b = getParallelOperations(p);
+    int global_max;
+    global_max = getParallelOperations(global_vec, count_size_vector, "max");
 
     if (rank == 0) {
-        ASSERT_EQ(a, b);
+        int reference_max = getSequentialOperations(global_vec, "max");
+        ASSERT_EQ(reference_max, global_max);
     }
 }
 
-TEST(Parallel_Operations_MPI, Test_Minimum5) {
-    std::vector<std::vector<int>> p = CreateMatrix(300, 400);
-
-
-    int a, b;
-
+TEST(Parallel_Operations_MPI, Test_Max_2) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    std::vector<int> global_vec;
+    const int count_size_vector = 120;
+
     if (rank == 0) {
-
-        a = getSequentialOperations(p);
-
+        global_vec = getRandomVector(count_size_vector);
     }
 
-    b = getParallelOperations(p);
+    int global_max;
+    global_max = getParallelOperations(global_vec, count_size_vector, "max");
 
     if (rank == 0) {
-        ASSERT_EQ(a, b);
+        int reference_max = getSequentialOperations(global_vec, "max");
+        ASSERT_EQ(reference_max, global_max);
     }
 }
 
 int main(int argc, char** argv) {
-
     ::testing::InitGoogleTest(&argc, argv);
     MPI_Init(&argc, &argv);
 

@@ -4,97 +4,65 @@
 #include <string>
 #include <random>
 #include <algorithm>
-#include <iostream>
-#include "./ops_mpi.h"
+#include "../../../modules/test_tasks/test_mpi/ops_mpi.h"
 
 
-
-int getSequentialOperations(std::vector<std::vector<int>> matrix) {
-    int min = matrix[0][0];
-    for (int i = 0; i < matrix.size(); i++)
-        for (int j = 0; j < matrix[i].size(); j++)
-            if (matrix[i][j] < min) {
-                min = matrix[i][j];
-            }
-    return min;
+std::vector<int> getRandomVector(int sz) {
+    std::random_device dev;
+    std::mt19937 gen(dev());
+    std::vector<int> vec(sz);
+    for (int  i = 0; i < sz; i++) { vec[i] = gen() % 100; }
+    return vec;
 }
 
+int getSequentialOperations(std::vector<int> vec, const std::string& ops) {
+    const int  sz = vec.size();
+    int reduction_elem = 0;
+    if (ops == "+") {
+        for (int  i = 0; i < sz; i++) {
+            reduction_elem += vec[i];
+        }
+    } else if (ops == "-") {
+        for (int  i = 0; i < sz; i++) {
+            reduction_elem -= vec[i];
+        }
+    } else if (ops == "max") {
+        reduction_elem = vec[0];
+        for (int  i = 1; i < sz; i++) {
+            reduction_elem = std::max(reduction_elem, vec[i]);
+        }
+    }
+    return reduction_elem;
+}
 
-int getParallelOperations(std::vector<std::vector<int>> matrix) {
+int getParallelOperations(std::vector<int> global_vec,
+                          int count_size_vector, const std::string& ops) {
     int size, rank;
-    int result = 0;
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    const int delta = count_size_vector / size;
 
-
-    if (matrix[0].size() < size) {
-        size = matrix[0].size();
-        if (rank >= matrix[0].size()) {
-            return 0;
-        }
-    }
-
-
-
-    int a = matrix[0].size() / size;
-    int b = matrix[0].size() % size;
     if (rank == 0) {
-        int min = matrix[0][0];
-        for (int j = 0; j < a + b; j++) {
-            for (int i = 0; i < matrix.size(); i++) {
-                if (matrix[i][j] < min) {
-                    min = matrix[i][j];
-                }
-            }
+        for (int proc = 1; proc < size; proc++) {
+            MPI_Send(global_vec.data() + proc * delta, delta,
+                        MPI_INT, proc, 0, MPI_COMM_WORLD);
         }
+    }
 
-
-
-
-
+    std::vector<int> local_vec(delta);
+    if (rank == 0) {
+        local_vec = std::vector<int>(global_vec.begin(),
+                                     global_vec.begin() + delta);
+    } else {
         MPI_Status status;
-        for (int i = 1; i < size; i++)
-        {
-            int temp;
-            MPI_Recv(&temp, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-            if (temp < min) {
-                min = temp;
-            }
-        }
-        result = min;
-    }
-    else {
-
-        int min = matrix[0][a + b + (rank - 1) * a];
-
-        for (int j = a + b + (rank - 1) * a; j < a + b + rank * a; j++) {
-            for (int i = 0; i < matrix.size(); i++) {
-                if (matrix[i][j] < min)
-                    min = matrix[i][j];
-            }
-        }
-        MPI_Send(&min, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-    }
-    return result;
-}
-
-
-
-
-
-
-
-std::vector<std::vector<int>> CreateMatrix(int m, int n) {
-    std::vector<std::vector<int>> matrix(m);
-    srand(100);
-    for (int i = 0; i < m; i++) {
-        matrix[i].resize(n);
+        MPI_Recv(local_vec.data(), delta, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
     }
 
-    for (int i = 0; i < m; i++)
-        for (int j = 0; j < n; j++)
-            matrix[i][j] = rand()%10000;
-
-    return matrix;
-
+    int global_sum = 0;
+    int local_sum = getSequentialOperations(local_vec, ops);
+    MPI_Op op_code = MPI_OP_NULL;
+    if (ops == "+" || ops == "-") { op_code = MPI_SUM; }
+    if (ops == "max") { op_code = MPI_MAX; }
+    MPI_Reduce(&local_sum, &global_sum, 1, MPI_INT, op_code, 0, MPI_COMM_WORLD);
+    return global_sum;
 }

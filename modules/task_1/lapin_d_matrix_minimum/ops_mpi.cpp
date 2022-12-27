@@ -27,18 +27,47 @@ int getParallelOperations(std::vector<std::vector<int>> matrix) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
 
-    if (matrix[0].size() < size) {
-        size = matrix[0].size();
-        if (rank >= matrix[0].size()) {
-            return 0;
-        }
-    }
+    
 
 
 
-    int a = matrix[0].size() / size;
-    int b = matrix[0].size() % size;
+    
     if (rank == 0) {
+
+
+        int old_size = 0;
+        if (matrix[0].size() < size) {
+            old_size = size;
+            size = matrix[0].size();
+        }
+        
+        for (int i = 1; i < size; i++) {
+            int not_run = 0;
+            MPI_Send(&not_run, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+        }
+
+        for (int i = size; i < old_size; i++) {
+            int not_run = 1;
+            MPI_Send(&not_run, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+        }
+
+
+        int a = matrix[0].size() / size;
+        int b = matrix[0].size() % size;
+
+
+        std::vector<int> matrix_lenta;
+        matrix_lenta = getVectorTransponMt(matrix);
+
+        for (int i = 1; i < size; i++) {
+
+            int len = matrix.size() * a;
+            MPI_Send(&len, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+            MPI_Send(matrix_lenta.data() + (b + a*i) * matrix.size(), matrix.size() * a, MPI_INT, i, 0, MPI_COMM_WORLD);
+        }
+
+
+
         int min = matrix[0][0];
         for (int j = 0; j < a + b; j++) {
             for (int i = 0; i < matrix.size(); i++) {
@@ -65,22 +94,128 @@ int getParallelOperations(std::vector<std::vector<int>> matrix) {
     }
     else {
 
-        int min = matrix[0][a + b + (rank - 1) * a];
+        MPI_Status status;
 
-        for (int j = a + b + (rank - 1) * a; j < a + b + rank * a; j++) {
-            for (int i = 0; i < matrix.size(); i++) {
-                if (matrix[i][j] < min)
-                    min = matrix[i][j];
-            }
+        int not_run;
+        MPI_Recv(&not_run, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+        if (not_run == 1) {
+            return 0;
         }
+
+
+        int len;
+        MPI_Recv(&len, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+
+        std::vector<int> local_vec(len);
+
+
+        MPI_Recv(local_vec.data(), len, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+
+
+        int min = local_vec[0];
+        for (int i = 0; i < len; i++) {
+            if (local_vec[i] < min)
+                min = local_vec[i];
+        }
+
         MPI_Send(&min, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
     }
     return result;
 }
 
+/*
+int getParallelOperations(std::vector<std::vector<int>> matrix) {
+    int size, rank, len;
+    int result = 0;
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    if (rank == 0) {
+        
+        std::vector<int> matrix_lenta;
+
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < matrix[0].size(); j++) {
+                std::cout << matrix[i][j] << " ";
+            }
+            std::cout << "\n";
+        }
+        std::cout << "\n";
+        std::cout << "\n";
+        matrix_lenta = getVectorTransponMt(matrix);
+
+
+        std::cout << "|" << matrix_lenta.size() << "\n";
+
+
+        for (int i = 0; i < matrix[0].size(); i++) {
+            for (int j = 0; j < matrix.size(); j++) {
+                std::cout << matrix_lenta[i * matrix.size() + j] << " ";
+            }
+            std::cout << "\n";
+        }
+
+
+        
+        for (int i = 1; i < 8; i++) {
+            int len = matrix.size();
+            MPI_Send(&len, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+            MPI_Send(matrix_lenta.data() + matrix.size() * i, matrix.size(), MPI_INT, i, 0, MPI_COMM_WORLD);
+        }
+        
+
+        
+        int min = matrix[0][0];
+
+        for (int j = 0; j < 1; j++) {
+            for (int i = 0; i < matrix.size(); i++) {
+                if (matrix[i][j] < min) {
+                    min = matrix[i][j];
+                }
+            }
+        }
 
 
 
+
+
+        MPI_Status status;
+        for (int i = 1; i < size; i++)
+        {
+            int temp;
+            MPI_Recv(&temp, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+            if (temp < min) {
+                min = temp;
+            }
+        }
+        result = min;
+        
+    }
+    else {
+        int len;
+
+        MPI_Status status;
+        MPI_Recv(&len, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+
+        std::vector<int> local_vec(len);
+
+
+        MPI_Recv(local_vec.data(), len, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+        
+
+        
+        int min = local_vec[0];
+        for (int i = 0; i < matrix.size(); i++) {
+            if (local_vec[i] < min)
+                min = local_vec[i];
+        }
+        
+        MPI_Send(&min, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        
+    }
+    return result;
+}
+*/
 
 
 
@@ -91,10 +226,25 @@ std::vector<std::vector<int>> CreateMatrix(int m, int n) {
         matrix[i].resize(n);
     }
 
+    std::mt19937 gen(1);
+
     for (int i = 0; i < m; i++)
         for (int j = 0; j < n; j++)
-            matrix[i][j] = rand()%10000;
+            matrix[i][j] = gen() % 10000;
+            //matrix[i][j] = rand()%10000;
+            //matrix[i][j] = i + j + 1;
 
     return matrix;
 
+}
+
+std::vector <int> getVectorTransponMt(const std::vector<std::vector<int>>& matrix) {
+
+    std::vector<int> tmp(matrix.size()* matrix[0].size());
+    for (int i = 0; i < matrix.size(); i++) {
+        for (int j = 0; j < matrix[0].size(); j++) {
+            tmp[i + j * matrix.size()] = matrix[i][j];
+        }
+    }
+    return tmp;
 }

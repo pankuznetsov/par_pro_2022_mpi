@@ -5,7 +5,7 @@
 #include <gtest-mpi-listener.hpp>
 
 TEST(Parallel_Operations_MPI, Test_Minimum1) {
-    std::vector<std::vector<int>> p = CreateMatrix(6, 6);
+    std::vector<std::vector<int>> p;
 
 
     int a, b;
@@ -13,9 +13,8 @@ TEST(Parallel_Operations_MPI, Test_Minimum1) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0) {
-
+        p = CreateMatrix(6, 8);
         a = getSequentialOperations(p);
-
     }
 
     b = getParallelOperations(p);
@@ -26,7 +25,7 @@ TEST(Parallel_Operations_MPI, Test_Minimum1) {
 }
 
 TEST(Parallel_Operations_MPI, Test_Minimum2) {
-    std::vector<std::vector<int>> p = CreateMatrix(50, 50);
+    std::vector<std::vector<int>> p;
 
 
     int a, b;
@@ -34,9 +33,8 @@ TEST(Parallel_Operations_MPI, Test_Minimum2) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0) {
-
+        p = CreateMatrix(50, 50);
         a = getSequentialOperations(p);
-
     }
 
     b = getParallelOperations(p);
@@ -47,7 +45,7 @@ TEST(Parallel_Operations_MPI, Test_Minimum2) {
 }
 
 TEST(Parallel_Operations_MPI, Test_Minimum3) {
-    std::vector<std::vector<int>> p = CreateMatrix(100, 100);
+    std::vector<std::vector<int>> p;
 
 
     int a, b;
@@ -55,9 +53,8 @@ TEST(Parallel_Operations_MPI, Test_Minimum3) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0) {
-
+        p = CreateMatrix(100, 20);
         a = getSequentialOperations(p);
-
     }
 
     b = getParallelOperations(p);
@@ -68,7 +65,7 @@ TEST(Parallel_Operations_MPI, Test_Minimum3) {
 }
 
 TEST(Parallel_Operations_MPI, Test_Minimum4) {
-    std::vector<std::vector<int>> p = CreateMatrix(200, 100);
+    std::vector<std::vector<int>> p;
 
 
     int a, b;
@@ -76,9 +73,8 @@ TEST(Parallel_Operations_MPI, Test_Minimum4) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0) {
-
+        p = CreateMatrix(100, 102);
         a = getSequentialOperations(p);
-
     }
 
     b = getParallelOperations(p);
@@ -89,7 +85,7 @@ TEST(Parallel_Operations_MPI, Test_Minimum4) {
 }
 
 TEST(Parallel_Operations_MPI, Test_Minimum5) {
-    std::vector<std::vector<int>> p = CreateMatrix(300, 400);
+    std::vector<std::vector<int>> p;
 
 
     int a, b;
@@ -97,9 +93,8 @@ TEST(Parallel_Operations_MPI, Test_Minimum5) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (rank == 0) {
-
+        p = CreateMatrix(300, 300);
         a = getSequentialOperations(p);
-
     }
 
     b = getParallelOperations(p);

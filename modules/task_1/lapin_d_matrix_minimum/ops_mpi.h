@@ -5,6 +5,7 @@
 #include <string>
 
 std::vector<std::vector<int>> CreateMatrix(int m, int n);
+std::vector<int> getVectorTransponMt(const std::vector<std::vector<int>>& matrix);
 int getParallelOperations(std::vector<std::vector<int>> matrix);
 int getSequentialOperations(std::vector<std::vector<int>> matrix);
 
