@@ -1,13 +1,14 @@
-// Copyright 2018 Nesterov Alexander
-#ifndef MODULES_TEST_TASKS_TEST_MPI_OPS_MPI_H_
-#define MODULES_TEST_TASKS_TEST_MPI_OPS_MPI_H_
-
+// Copyright 2022 Lapin Dmitriy
+#ifndef MODULES_TASK_1_LAPIN_D_MATRIX_MINIMUM_OPS_MPI_H_
+#define MODULES_TASK_1_LAPIN_D_MATRIX_MINIMUM_OPS_MPI_H_
 #include <vector>
 #include <string>
 
-std::vector<int> getRandomVector(int  sz);
-int getParallelOperations(std::vector<int> global_vec,
-                          int count_size_vector, const std::string& ops);
-int getSequentialOperations(std::vector<int> vec, const std::string& ops);
+std::vector<std::vector<int>> CreateMatrix(int m, int n);
+std::vector<int> getVectorTransponMt(const std::vector<std::vector<int>>& matrix);
+int getParallelOperations(std::vector<std::vector<int>> matrix);
+int getSequentialOperations(std::vector<std::vector<int>> matrix);
 
-#endif  // MODULES_TEST_TASKS_TEST_MPI_OPS_MPI_H_
+
+
+#endif  
