@@ -6,8 +6,8 @@
 #include <mpi.h>
 #include <iostream>
 
-template <typename F>
-double Integrate2D_Rectangles(double a, double b, double c, double d, int nx,
+/* template <typename F>
+double Integrate2D_Rectangles(double ax, double b, double c, double d, int nx,
                               int ny, F f) {
   double sum = 0;
   double hx = (bx - ax) / static_cast<double>(nx),
@@ -18,7 +18,7 @@ double Integrate2D_Rectangles(double a, double b, double c, double d, int nx,
     }
   }
   return sum;
-}
+} */
 
 template <typename F>
 double Integrate2D_Trapezoid(double ax, double bx, double ay, double by, int nx,
