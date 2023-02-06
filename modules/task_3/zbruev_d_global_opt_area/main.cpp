@@ -15,7 +15,7 @@ TEST(GlobalOptimizationArea, SimpleTest) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
     glob_optimization_sequen(&res, -1, 1, simple_func);
-    
+
     if (rank == 0) {
         ASSERT_TRUE(res - eps < -1.0 && -1.0 < res + eps);
     }

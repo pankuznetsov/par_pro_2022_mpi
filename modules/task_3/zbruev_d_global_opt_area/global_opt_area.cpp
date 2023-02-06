@@ -8,7 +8,8 @@
 constexpr double epsilon = 1e-5;
 constexpr double minus_inf = -1e+305;
 
-void calc_probability(double* result, double m, int i, const std::vector<double>& vec, std::function<double(double)> func) {
+void calc_probability(double* result, double m, int i, 
+    const std::vector<double>& vec, std::function<double(double)> func) {
     double mdiff = (vec[i] - vec[i - 1]) * m;
     double fdiff = func(vec[i]) - func(vec[i - 1]);
     *result = mdiff + (fdiff * fdiff) / mdiff - 2 * (func(vec[i]) + func(vec[i - 1]));
@@ -16,7 +17,7 @@ void calc_probability(double* result, double m, int i, const std::vector<double>
 
 void glob_optimization_sequen(double* result, double start, double end, std::function<double(double)> func) {
     constexpr int iter = 1000;
-    constexpr double r = 2.0; // reliability for constant m
+    constexpr double r = 2.0;  // reliability for constant m
 
     std::vector<double> r_vec(iter + 1, minus_inf);
 
@@ -32,13 +33,13 @@ void glob_optimization_sequen(double* result, double start, double end, std::fun
         sort(r_vec.begin(), r_vec.begin() + c + 1);
 
         // Lipschitz constant M
-        M = abs((func(r_vec[1]) - func(r_vec[0])) / (r_vec[1] - r_vec[0])); 
+        M = abs((func(r_vec[1]) - func(r_vec[0])) / (r_vec[1] - r_vec[0]));
         for (int i = 1; i <= c; i++) {
             M = std::max(M, abs((func(r_vec[i]) - func(r_vec[i - 1])) / (r_vec[i] - r_vec[i - 1])));
         }
 
         // Lipschitz constant m
-        m = M == 0 ? 1 : M * r; 
+        m = M == 0 ? 1 : M * r;
 
         // Probability
         double p;
@@ -82,7 +83,7 @@ void glob_optimization_parallel(double* result, double start, double end, std::f
     r_vec[0] = start;
     r_vec[1] = end;
     r_vec[2] = (r_vec[1] + r_vec[0]) / 2 - (func(r_vec[1]) - func(r_vec[0])) / (2 * m);
-    
+
     int index = 1, c = 2;
     for (; c < iter; c++) {
         sort(r_vec.begin(), r_vec.begin() + c + 1);
@@ -115,7 +116,7 @@ void glob_optimization_parallel(double* result, double start, double end, std::f
         }
     }
     sort(r_vec.begin(), r_vec.begin() + c + 1);
-    
+
     double l_start = r_vec[rank * iter / size];
     double l_end = size - rank == 1 ? r_vec[iter - 1] : r_vec[(rank + 1) * iter / size];
     glob_optimization_sequen(&loc_res, l_start, l_end, func);
