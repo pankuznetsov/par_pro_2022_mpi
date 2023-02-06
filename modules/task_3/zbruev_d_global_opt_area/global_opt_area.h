@@ -5,8 +5,8 @@
 #include <vector>
 #include <string>
 
-void calc_probability(double* result, double m, int i, 
-	const std::vector<double>& vec, std::function<double(double)> func);
+void calc_probability(double* result, double m, int i,
+    const std::vector<double>& vec, std::function<double(double)> func);
 void glob_optimization_sequen(double* result, double start, double end, std::function<double(double)> func);
 void glob_optimization_parallel(double* result, double start, double end, std::function<double(double)> func);
 

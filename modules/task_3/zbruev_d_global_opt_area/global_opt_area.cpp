@@ -8,7 +8,7 @@
 constexpr double epsilon = 1e-5;
 constexpr double minus_inf = -1e+305;
 
-void calc_probability(double* result, double m, int i, 
+void calc_probability(double* result, double m, int i,
     const std::vector<double>& vec, std::function<double(double)> func) {
     double mdiff = (vec[i] - vec[i - 1]) * m;
     double fdiff = func(vec[i]) - func(vec[i - 1]);
