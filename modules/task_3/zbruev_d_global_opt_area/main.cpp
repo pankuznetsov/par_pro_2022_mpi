@@ -1,5 +1,6 @@
 // Copyright 2022 Zbruev Denis
 #include <gtest/gtest.h>
+#include <cmath>
 #include <vector>
 #include "./global_opt_area.h"
 #include <gtest-mpi-listener.hpp>
