@@ -21,7 +21,7 @@ void glob_optimization_sequen(double* result, double start, double end, std::fun
 
     std::vector<double> r_vec(iter + 1, minus_inf);
 
-    double M = abs((func(r_vec[1]) - func(r_vec[0])) / (r_vec[1] - r_vec[0]));
+    double M = std::abs((func(r_vec[1]) - func(r_vec[0])) / (r_vec[1] - r_vec[0]));
     double m = M == 0 ? 1 : M * r;
 
     r_vec[0] = start;
@@ -33,9 +33,9 @@ void glob_optimization_sequen(double* result, double start, double end, std::fun
         sort(r_vec.begin(), r_vec.begin() + c + 1);
 
         // Lipschitz constant M
-        M = abs((func(r_vec[1]) - func(r_vec[0])) / (r_vec[1] - r_vec[0]));
+        M = std::abs((func(r_vec[1]) - func(r_vec[0])) / (r_vec[1] - r_vec[0]));
         for (int i = 1; i <= c; i++) {
-            M = std::max(M, abs((func(r_vec[i]) - func(r_vec[i - 1])) / (r_vec[i] - r_vec[i - 1])));
+            M = std::max(M, std::abs((func(r_vec[i]) - func(r_vec[i - 1])) / (r_vec[i] - r_vec[i - 1])));
         }
 
         // Lipschitz constant m
@@ -77,7 +77,7 @@ void glob_optimization_parallel(double* result, double start, double end, std::f
     std::vector<double> all_loc_res(size);
     std::vector<double> r_vec(iter + 1, minus_inf);
 
-    double M = abs((func(r_vec[1]) - func(r_vec[0])) / (r_vec[1] - r_vec[0]));
+    double M = std::abs((func(r_vec[1]) - func(r_vec[0])) / (r_vec[1] - r_vec[0]));
     double m = M == 0 ? 1 : M * r;
 
     r_vec[0] = start;
@@ -89,9 +89,9 @@ void glob_optimization_parallel(double* result, double start, double end, std::f
         sort(r_vec.begin(), r_vec.begin() + c + 1);
 
         // Lipschitz constant M
-        M = abs((func(r_vec[1]) - func(r_vec[0])) / (r_vec[1] - r_vec[0]));
+        M = std::abs((func(r_vec[1]) - func(r_vec[0])) / (r_vec[1] - r_vec[0]));
         for (int i = 1; i <= c; i++) {
-            M = std::max(M, abs((func(r_vec[i]) - func(r_vec[i - 1])) / (r_vec[i] - r_vec[i - 1])));
+            M = std::max(M, std::abs((func(r_vec[i]) - func(r_vec[i - 1])) / (r_vec[i] - r_vec[i - 1])));
         }
 
         // Lipschitz constant m
