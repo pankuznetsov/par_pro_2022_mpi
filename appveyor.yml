@@ -27,5 +27,4 @@ build_script:
                -D MPI_CXX_LIBRARIES:PATH="%MPI_HOME%/Lib/x86/msmpi.lib" .. ^
                -A Win32
   - cmd: cmake --build .
-
   
