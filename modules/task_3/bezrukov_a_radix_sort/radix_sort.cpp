@@ -41,10 +41,10 @@ void radixSortSequential(std::vector<double>* array) {
 
     buck[0] = 0;
     buck[1] = 0;
-    for (int i = 0; i < size; i++) buck[a[i] >> 63 & 1]++;
+    for (int i = 0; i < size; i++) buck[(a[i] >> 62 >> 1) & 1]++;
 
     for (int i = size - 1; i >= 0; i--) {
-        p = a[i] >> 63 & 1;
+        p = (a[i] >> 62 >> 1) & 1;
         b = --buck[p];
         (*array)[b - p * (b + b - size + 1)] = *(double*)&a[i];
     }
