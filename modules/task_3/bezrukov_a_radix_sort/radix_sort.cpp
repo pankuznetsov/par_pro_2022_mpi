@@ -3,55 +3,84 @@
 #include <mpi.h>
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include <random>
 
 std::vector<double> genRandomVector(int len) {
     std::random_device randDevice;
     std::mt19937 genEngine(randDevice());
-    std::uniform_real_distribution<> doubleDistribution(-100.0, 100.0);
+    std::uniform_real_distribution<> doubleDistribution(100.0, 300.0);
     std::vector<double> targetVec(len);
     for (int i = 0; i < len; ++i) targetVec[i] = doubleDistribution(genEngine);
     return targetVec;
 }
 
-void printVector(const std::vector<int> vec) {
+void printVector(const std::vector<double>& vec) {
     for (size_t k = 0; k < vec.size(); k++) std::cout << vec[k] << ' ';
 }
 
+int leftOfThePoint(double number) {
+    int radix = 0;
+    while (number > 1) {
+        number /= 10;
+        radix++;
+    }
+    return radix;
+}
+
+int rightOfThePoint(double number) {
+    std::ostringstream strs;
+    strs << number;
+    std::string str = strs.str();
+    int size = str.size();
+    int pos = str.find('.');
+    int value = size - pos - 1;
+    return value;
+}
+
+int getDigit(double number, int radix) {
+    if (radix > 0) {
+        double mask = pow(10, radix);
+        double tmp = number / mask;
+        return static_cast<int>(tmp) % 10;
+    }
+    return  static_cast<int>(number * pow(10, -radix)) % 10;
+}
+
+std::vector<double> sortByOneRadix(const std::vector<double>& vect, int rad) {
+    std::vector<double> res;
+    std::vector <std::vector<double>> radix(10);
+
+    for (int i = 0; i < static_cast<int>(vect.size()); i++)
+        radix[getDigit(vect[i], rad)].push_back(vect[i]);
+
+    for (int i = 0; i < static_cast<int>(radix.size()); ++i)
+        for (int j = 0; j < static_cast<int>(radix[i].size()); ++j)
+            res.push_back(radix[i][j]);
+    return res;
+}
+
 void radixSortSequential(std::vector<double>* array) {
-    int size = static_cast<int>((*array).size());
-    long long* a = new long long[size];
-    long long* a2 = new long long[size];
-    int* buck = new int[512];
-    bool p;
-    int b;
-
-    for (int i = 0; i < size; i++) a[i] = *(long long*)&(*array)[i];
-
-    for (int shift = 0; shift < 63; shift += 9) {
-        for (int i = 0; i <= 0x1ff; i++) buck[i] = 0;
-        for (int i = 0; i < size; i++) buck[a[i] >> shift & 0x1ff]++;
-        for (int i = 0x1ff; i > 0; i--) buck[i - 1] += buck[i];
-        for (int i = size - 1; i >= 0; i--)
-            a2[--buck[a[i] >> shift & 0x1ff]] = a[i];
-        long long* tmp = a;
-        a = a2;
-        a2 = tmp;
+    int size = (*array).size();
+    int maxRadixNegativeZero = rightOfThePoint((*array)[0]);
+    for (int i = 1; i < size; ++i) {
+        int radixNegativeZero = 0;
+        radixNegativeZero = rightOfThePoint((*array)[i]);
+        if (radixNegativeZero > maxRadixNegativeZero)
+            maxRadixNegativeZero = radixNegativeZero;
     }
-
-    buck[0] = 0;
-    buck[1] = 0;
-    for (int i = 0; i < size; i++) buck[(a[i] >> 62 >> 1) & 1]++;
-
-    for (int i = size - 1; i >= 0; i--) {
-        p = (a[i] >> 62 >> 1) & 1;
-        b = --buck[p];
-        (*array)[b - p * (b + b - size + 1)] = *(double*)&a[i];
+    double max_elem = (*array)[0];
+    for (int i = 1; i < size; i++) {
+        if ((*array)[i] > max_elem)
+            max_elem = (*array)[i];
     }
+    int maxRadixPositiveZero = leftOfThePoint(max_elem);
+    std::vector<double> result((*array));
+    for (int i = -maxRadixNegativeZero; i <= maxRadixPositiveZero; i++)
+        result = sortByOneRadix(result, i);
 
-    delete[] buck;
-    delete[] a;
-    delete[] a2;
+    for(int i = 0; i < size; i++)
+        (*array)[i] = result[i];
 }
 
 void radixSortParallel(std::vector<double>* globVec, int len) {
@@ -101,34 +130,34 @@ void radixSortParallel(std::vector<double>* globVec, int len) {
         if (remains == 0) posArr[usefulPCount] = -1;
 
         for (int i = 0; i < len; i++) {
-            int maxPartIdx = -1;
+            int minPartIdx = -1;
 
             for (int j = 0; j < usefulPCount + 1; j++) {
                 if (posArr[j] >= 0) {
-                    maxPartIdx = j;
+                    minPartIdx = j;
                     break;
                 }
             }
 
-            for (int j = maxPartIdx + 1; j < usefulPCount + 1; j++) {
+            for (int j = minPartIdx + 1; j < usefulPCount + 1; j++) {
                 if (posArr[j] >= 0 &&
-                    globVec2[countPerP * j + posArr[j]] >
-                        globVec2[countPerP * maxPartIdx + posArr[maxPartIdx]]) {
-                    maxPartIdx = j;
+                    globVec2[countPerP * j + posArr[j]] <
+                        globVec2[countPerP * minPartIdx + posArr[minPartIdx]]) {
+                    minPartIdx = j;
                 }
             }
 
-            if (maxPartIdx < 0) break;
+            if (minPartIdx < 0) break;
 
             (*globVec)[i] =
-                globVec2[countPerP * maxPartIdx + posArr[maxPartIdx]];
-            posArr[maxPartIdx]++;
+                globVec2[countPerP * minPartIdx + posArr[minPartIdx]];
+            posArr[minPartIdx]++;
 
-            if (maxPartIdx != usefulPCount && posArr[maxPartIdx] == countPerP)
-                posArr[maxPartIdx] = -1;
-            else if (maxPartIdx == usefulPCount &&
-                     posArr[maxPartIdx] == remains)
-                posArr[maxPartIdx] = -1;
+            if (minPartIdx != usefulPCount && posArr[minPartIdx] == countPerP)
+                posArr[minPartIdx] = -1;
+            else if (minPartIdx == usefulPCount &&
+                     posArr[minPartIdx] == remains)
+                posArr[minPartIdx] = -1;
         }
     }
 }
