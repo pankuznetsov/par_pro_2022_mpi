@@ -3,6 +3,8 @@
 #include <gtest/gtest.h>
 #include <gtest-mpi-listener.hpp>
 #include "./bubble_sort.h"
+#include <ctime>
+
 
 TEST(ParallelBubbleSort, TestOne) {
   int rankOfThread;
@@ -10,7 +12,6 @@ TEST(ParallelBubbleSort, TestOne) {
 
   int arrSize = 3;
   int* arr = new int[arrSize];
-  int* rArr;
 
   for (int i = 0; i < arrSize; i++) {
     arr[i] = ArrGenerate(arrSize);
@@ -32,7 +33,6 @@ TEST(ParallelBubbleSort, TestTwo) {
 
   int arrSize = 6;
   int* arr = new int[arrSize];
-  int* rArr;
 
   for (int i = 0; i < arrSize; i++) {
     arr[i] = ArrGenerate(arrSize);
@@ -52,7 +52,6 @@ TEST(ParallelBubbleSort, TestThree) {
 
   int arrSize = 9;
   int* arr = new int[arrSize];
-  int* rArr;
 
   for (int i = 0; i < arrSize; i++) {
     arr[i] = ArrGenerate(arrSize);
@@ -72,7 +71,6 @@ TEST(ParallelBubbleSort, TestFour) {
 
   int arrSize = 12;
   int* arr = new int[arrSize];
-  int* rArr;
 
   for (int i = 0; i < arrSize; i++) {
     arr[i] = ArrGenerate(arrSize);
@@ -92,7 +90,6 @@ TEST(ParallelBubbleSort, TestFive) {
 
   int arrSize = 15;
   int* arr = new int[arrSize];
-  int* rArr;
 
   for (int i = 0; i < arrSize; i++) {
     arr[i] = ArrGenerate(arrSize);
@@ -112,7 +109,6 @@ TEST(ParallelBubbleSort, TestSix) {
 
   int arrSize = 18;
   int* arr = new int[arrSize];
-  int* rArr;
 
   for (int i = 0; i < arrSize; i++) {
     arr[i] = ArrGenerate(arrSize);

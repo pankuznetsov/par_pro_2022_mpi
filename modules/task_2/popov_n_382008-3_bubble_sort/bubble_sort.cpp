@@ -3,6 +3,8 @@
 #include "../../../modules/task_2/popov_n_382008-3_bubble_sort/bubble_sort.h"
 #include <mpi.h>
 #include <random>
+#include <ctime>
+
 
 int ArrGenerate(int arrSize) {
   std::mt19937 generator;
