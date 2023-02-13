@@ -74,6 +74,7 @@ vector<int> MultipleParallel(const Matrix &matr, const vector<int> &vect) {
 
             int cols_send = cols_for_proc;
             int str_send = matr.Str();
+
             int *matr_part = new int[cols_for_proc * matr.Str()];
             int *vect_part = new int[cols_for_proc];
 
