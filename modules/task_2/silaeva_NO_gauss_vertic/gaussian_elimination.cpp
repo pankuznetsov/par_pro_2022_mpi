@@ -6,7 +6,7 @@
 #include <ctime>
 #include <vector>
 #include <stdexcept>
-#include "./gaussian_elimination.h"
+#include "gaussian_elimination.h"
 
 static int offset = 0;
 
