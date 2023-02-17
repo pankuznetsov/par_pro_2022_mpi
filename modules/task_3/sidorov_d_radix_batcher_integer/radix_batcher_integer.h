@@ -17,5 +17,5 @@ void BatchMerge(vector<int>* arr, int n, int left, int right);
 void intSort(vector<int>* arr);
 void intSortCat(vector<int>* arr, int cat);
 int MaxCategoryNumber(int num);
-vector<int> ParSort(vector<int> arr, int size);
+vector<int> ParSort(vector<int>& arr, int size);
 #endif  // MODULES_TASK_3_SIDOROV_D_RADIX_BATCHER_INTEGER_RADIX_BATCHER_INT_H_

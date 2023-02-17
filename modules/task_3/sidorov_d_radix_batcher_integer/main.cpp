@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 #include <mpi.h>
 
-#include <vector>
 #include <gtest-mpi-listener.hpp>
+#include <vector>
 
 #include "../../../modules/task_3/sidorov_d_radix_batcher_integer/radix_batcher_integer.h"
 
@@ -99,7 +99,6 @@ TEST(RADIX_BATCHER, Test_5) {
     }
   }
 }
-
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);

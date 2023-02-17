@@ -91,7 +91,7 @@ void intSort(vector<int>* arr) {
   }
 }
 
-vector<int> ParSort(vector<int> arr, int size) {
+vector<int> ParSort(vector<int>& arr, int size) {
   int comm_size, rank;
   MPI_Comm_size(MPI_COMM_WORLD, &comm_size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
