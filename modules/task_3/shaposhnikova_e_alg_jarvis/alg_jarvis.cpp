@@ -34,9 +34,9 @@ std::vector<int> algJarvisSequential(std::vector<int> hull) {
     int f_x = start_x;
     int f_y = start_y;
 
-    auto iter = hull.cbegin();
-    hull.erase(iter + start_id);
-    hull.erase(iter + start_id);
+    std::swap(hull[start_id], hull[hull.size() - 2]);
+    std::swap(hull[start_id + 1], hull[hull.size() - 1]);
+    hull.pop_back(), hull.pop_back();
 
     resArr.push_back(f_x);
     resArr.push_back(f_y);
@@ -64,9 +64,9 @@ std::vector<int> algJarvisSequential(std::vector<int> hull) {
         resArr.push_back(x);
         resArr.push_back(y);
 
-        iter = hull.cbegin();
-        hull.erase(iter + point_pos);
-        hull.erase(iter + point_pos);
+        std::swap(hull[point_pos], hull[hull.size() - 2]);
+        std::swap(hull[point_pos + 1], hull[hull.size() - 1]);
+        hull.pop_back(), hull.pop_back();
 
         start_x = x, start_y = y;
         point_pos = 0;
