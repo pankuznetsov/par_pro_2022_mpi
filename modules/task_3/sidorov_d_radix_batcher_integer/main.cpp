@@ -100,6 +100,7 @@ TEST(RADIX_BATCHER, Test_5) {
   }
 }
 
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   MPI_Init(&argc, &argv);
