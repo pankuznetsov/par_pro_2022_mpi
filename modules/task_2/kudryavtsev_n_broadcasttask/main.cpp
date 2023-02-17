@@ -86,7 +86,7 @@ namespace pi_calc {
         }
         return result;
     }
-} 
+}
 
 TEST(Bcast_Impl_MPI, Vector5_Int) {
     int rank;
