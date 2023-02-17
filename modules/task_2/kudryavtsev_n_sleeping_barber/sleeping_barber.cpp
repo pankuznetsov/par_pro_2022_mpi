@@ -43,8 +43,7 @@ void Barber(int size_of_queue) {
                 que.push(client_id);
                 Free = 1;
                 MPI_Send(&Free, 1, MPI_INT, client_id, 0, MPI_COMM_WORLD);
-            }
-            else {
+            } else {
                 Free = 0;
                 MPI_Send(&Free, 1, MPI_INT, client_id, 0, MPI_COMM_WORLD);
             }
@@ -85,8 +84,7 @@ void Client(int ID) {
         if (barber_is_free) {
             MPI_Recv(&barber_is_free, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             MPI_Recv(&barber_is_cutting, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        }
-        else {
+        } else {
             double waiting_time = TimeRandomizer();
             print_messages(ID, "Waiting for a Barber...", waiting_time);
             expect(waiting_time);

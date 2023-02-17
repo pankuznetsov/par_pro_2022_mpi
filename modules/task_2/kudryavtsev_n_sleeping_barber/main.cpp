@@ -4,8 +4,6 @@
 #include "../../../modules/task_2/kudryavtsev_n_sleeping_barber/sleeping_barber.h"
 #include <gtest-mpi-listener.hpp>
 
-
-
 TEST(Barber, TEST_ASSSERT1) {
     int visite_size;
     MPI_Comm_size(MPI_COMM_WORLD, &visite_size);

@@ -1,12 +1,12 @@
 // Copyright 2022 Kudryavtsev Nikita
-#include <mpi.h>
-#include <gtest-mpi-listener.hpp>
 #include <gtest/gtest.h>
+#include <mpi.h>
 #include <math.h>
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include "./broadcast.h"
+#include "../../../modules/task_2/kudryavtsev_n_broadcasttask/broadcasttask.h"
+#include <gtest-mpi-listener.hpp>
 
 namespace pi_calc {
     constexpr double PI25DT = 3.141592653589793238462643;
@@ -86,7 +86,7 @@ namespace pi_calc {
         }
         return result;
     }
-}  
+} 
 
 TEST(Bcast_Impl_MPI, Vector5_Int) {
     int rank;

@@ -1,7 +1,7 @@
 // Copyright 2022 Kudryavtsev Nikita
 #include <mpi.h>
 #include "../../../modules/task_2/kudryavtsev_n_broadcasttask/broadcasttask.h"
-                                          
+
 inline int choose_rank(int rank, int root) {
     if (rank == root)
         return 0;
