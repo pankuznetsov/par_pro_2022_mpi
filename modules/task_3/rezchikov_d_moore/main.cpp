@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "/home/dmitrii/gtest-mpi-listener/include/gtest-mpi-listener.hpp"
+#include <gtest-mpi-listener.hpp>
 #include "./moore.h"
 
 
