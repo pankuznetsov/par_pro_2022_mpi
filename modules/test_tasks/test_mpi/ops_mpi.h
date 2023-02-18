@@ -1,13 +1,13 @@
-// Copyright 2018 Nesterov Alexander
-#ifndef MODULES_TEST_TASKS_TEST_MPI_OPS_MPI_H_
-#define MODULES_TEST_TASKS_TEST_MPI_OPS_MPI_H_
-
+// Copyright 2022 Lapin Dmitriy
+#ifndef MODULES_TASK_2_LAPIN_D_GRAPH_RING_OPS_MPI_H_
+#define MODULES_TASK_2_LAPIN_D_GRAPH_RING_OPS_MPI_H_
 #include <vector>
 #include <string>
+#include <mpi.h>
 
-std::vector<int> getRandomVector(int  sz);
-int getParallelOperations(std::vector<int> global_vec,
-                          int count_size_vector, const std::string& ops);
-int getSequentialOperations(std::vector<int> vec, const std::string& ops);
 
-#endif  // MODULES_TEST_TASKS_TEST_MPI_OPS_MPI_H_
+void MPI_group_ring_create(MPI_Comm old_comm, int nodes, int index[], MPI_Comm* new_comm);
+int Ring_Send(const void* buf, int count, MPI_Datatype datatype, int from, int dest, int tag, MPI_Comm comm);
+
+
+#endif  
