@@ -3,20 +3,56 @@
 #include "./moore.h"
 
 
-TEST(Moors_Algorithm_MPI, Test_5) {
+
+
+TEST(Moors_Algorithm_MPI, Test_Exception){
     int rank;
     int n = 5;
     bool cycle_flag = false,
         cycle_flag2 = false;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    std::vector<int> g(n * n);
+    std::vector<int> graph(n * n);
     if (rank == 0)
         graph = getRandomGraph(n);
     std::vector<int> resSeq(n);
     std::vector<int> resPar(n);
-    MooreParallel(g, 0, resPar, &cycle_flag );
+    ASSERT_ANY_THROW( MooreParallel(graph, -1, resPar, &cycle_flag) );
+}
+
+TEST(Moors_Algorithm_MPI, Test_One){
+    int rank;
+    int n = 1;
+    bool cycle_flag = false,
+        cycle_flag2 = false;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    std::vector<int> graph(n * n);
+    if (rank == 0)
+        graph = getRandomGraph(n);
+    std::vector<int> resSeq(n);
+    std::vector<int> resPar(n);
+    MooreParallel(graph, 0, resPar, &cycle_flag );
     if (rank == 0) {
-        resSeq = MooreSequential(g, 0, &cycle_flag2);
+        resSeq = MooreSequential(graph, 0, &cycle_flag2);
+        for (int i = 0; i < n; ++i) {
+            ASSERT_EQ(resPar[i], resSeq[i]);
+        }
+    }
+}
+
+TEST(Moors_Algorithm_MPI, Test_Five) {
+    int rank;
+    int n = 5;
+    bool cycle_flag = false,
+        cycle_flag2 = false;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    std::vector<int> graph(n * n);
+    if (rank == 0)
+        graph = getRandomGraph(n);
+    std::vector<int> resSeq(n);
+    std::vector<int> resPar(n);
+    MooreParallel(graph, 0, resPar, &cycle_flag );
+    if (rank == 0) {
+        resSeq = MooreSequential(graph, 0, &cycle_flag2);
         for (int i = 0; i < n; ++i) {
             ASSERT_EQ(resPar[i], resSeq[i]);
         }
@@ -26,14 +62,17 @@ TEST(Moors_Algorithm_MPI, Test_5) {
 TEST(Moors_Algorithm_MPI, Test_10) {
     int rank;
     int n = 10;
+    bool cycle_flag = false,
+        cycle_flag2 = false;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    std::vector<int> graph(n*n);
     if (rank == 0)
         graph = getRandomGraph(n);
     std::vector<int> resSeq(n);
     std::vector<int> resPar(n);
-    MooreParallel(g, 0, resPar, &cycle_flag );
+    MooreParallel(graph, 0, resPar, &cycle_flag );
     if (rank == 0) {
-        resSeq = MooreSequential(g, 0, &cycle_flag2);
+        resSeq = MooreSequential(graph, 0, &cycle_flag2);
         for (int i = 0; i < n; ++i) {
             ASSERT_EQ(resPar[i], resSeq[i]);
         }
@@ -43,15 +82,17 @@ TEST(Moors_Algorithm_MPI, Test_10) {
 TEST(Moors_Algorithm_MPI, Test_100) {
     int rank;
     int n = 100;
+    bool cycle_flag = false,
+        cycle_flag2 = false;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    std::vector<int> g(n * n);
+    std::vector<int> graph(n * n);
     if (rank == 0)
         graph = getRandomGraph(n);
     std::vector<int> resSeq(n);
     std::vector<int> resPar(n);
-    MooreParallel(g, 0, resPar, &cycle_flag );
+    MooreParallel(graph, 0, resPar, &cycle_flag );
     if (rank == 0) {
-        resSeq = MooreSequential(g, 0, &cycle_flag2);
+        resSeq = MooreSequential(graph, 0, &cycle_flag2);
         for (int i = 0; i < n; ++i) {
             ASSERT_EQ(resPar[i], resSeq[i]);
         }

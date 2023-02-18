@@ -2,10 +2,13 @@
 
 
 
+#include <mpi.h>
+#include <random>
+#include <iostream>
 
 #define INF 10000000
 
-std::vector<int> getRandomGrapgh(int size){
+std::vector<int> getRandomGraph(int size){
 
     std::random_device dev;
     std::mt19937 rng(dev());
@@ -31,11 +34,16 @@ std::vector<int> getRandomGrapgh(int size){
 void MooreParallel(std::vector<int> & graph, int srcVer, std::vector<int> & res, bool * cycle_flag){
     
     int size, rank, vertexNum;
-    
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
     if ( rank == 0 ){
         vertexNum = sqrt(graph.size());
     } 
     MPI_Bcast(&vertexNum, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    if ( srcVer >= vertexNum || srcVer < 0){
+        throw std::out_of_range("source vertex not in range");
+    }
 
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -96,6 +104,10 @@ void MooreParallel(std::vector<int> & graph, int srcVer, std::vector<int> & res,
 std::vector<int> MooreSequential(std::vector<int> & graph, int srcVer, bool * cycle_flag){
     
     int vertexNum = sqrt(graph.size());
+    if ( srcVer >= vertexNum || srcVer < 0 ){
+        throw std::out_of_range("source vertex not in range");
+    }
+
     std::vector<int> dist(vertexNum, INT32_MAX);
     dist[srcVer] = 0;
 
