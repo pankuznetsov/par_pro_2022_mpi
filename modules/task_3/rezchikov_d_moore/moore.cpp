@@ -67,10 +67,10 @@ void MooreParallel(std::vector<int> & graph, int srcVer, std::vector<int> & res,
     }
     MPI_Barrier(MPI_COMM_WORLD);
     
-    bool any_change;
+    int any_change = 0;
     int cnt = 0;
     for ( int i = 0; i < vertexNum; ++i){
-        any_change = false;
+        any_change = 0;
         cnt++;
         for ( int u = rank_begin; u < rank_end; ++u){
             for ( int v = 0; v < vertexNum; ++v ){
@@ -78,14 +78,14 @@ void MooreParallel(std::vector<int> & graph, int srcVer, std::vector<int> & res,
                 if ( w < INF ){
                     if ( local_dist[u] + w < local_dist[v]) {
                         local_dist[v] = local_dist[u] + w;
-                        any_change = true;
+                        any_change = 1;
                     }
                 }
             }
         }
         MPI_Allreduce(MPI_IN_PLACE, &any_change,
-                        1, MPI_CXX_BOOL, MPI_LOR, MPI_COMM_WORLD);
-        if (!any_change){
+                        1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+        if (any_change == 0 ){
             break;
         }
         if ( cnt == vertexNum ){
