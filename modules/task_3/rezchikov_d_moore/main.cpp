@@ -23,7 +23,7 @@ TEST(Moors_Algorithm_MPI, Test_5) {
     }
 }
 
-TEST(Moors_Algorithm_MPI, Test_On_Size_10) {
+TEST(Moors_Algorithm_MPI, Test_10) {
     int rank;
     int n = 10;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -40,7 +40,7 @@ TEST(Moors_Algorithm_MPI, Test_On_Size_10) {
     }
 }
 
-TEST(Moors_Algorithm_MPI, Test_On_Size_100) {
+TEST(Moors_Algorithm_MPI, Test_100) {
     int rank;
     int n = 100;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
