@@ -1,7 +1,5 @@
 #include "moore.h"
 
-
-
 #include <mpi.h>
 #include <random>
 #include <iostream>
