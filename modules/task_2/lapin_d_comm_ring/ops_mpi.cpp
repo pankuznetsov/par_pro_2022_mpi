@@ -119,14 +119,11 @@ int Ring_Send(const void* buf, int count, MPI_Datatype datatype,
                 MPI_Recv(local_vec.data(), count, datatype, MPI_ANY_SOURCE, tag, comm, &status);
                 MPI_Send(local_vec.data(), count, datatype, d, tag, comm);
             }
-            return 0;
         }
-        return 0;
     }
         
     else {
         return -1;
     }
-    return 0;
 }
 
