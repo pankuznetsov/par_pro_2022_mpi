@@ -121,10 +121,12 @@ int Ring_Send(const void* buf, int count, MPI_Datatype datatype,
             }
             return 0;
         }
+        return 0;
     }
         
     else {
         return -1;
     }
+    return 0;
 }
 
