@@ -47,7 +47,7 @@ std::vector<double> gaussMethSequential(std::vector<double> M, const int n) {
 
     // The first stage
     for (int j = 0; j < n - 1; ++j) {
-        // find the row where the elem in the leading col is the largest modulo and below the current leading row
+        // find the row where the elem in the leading col is the largest modulo and which is below the current leading row
         int maxRow = j;
         for (int i = j + 1; i < n; ++i)
             if (fabs(M[j + i * (n+1)]) > fabs(M[j + maxRow * (n+1)]))  // take the first matching row
@@ -94,7 +94,7 @@ std::vector<double> gaussMethParallel(std::vector<double> M, const int n) {
     MPI_Comm_size(MPI_COMM_WORLD, &commSize);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    // send strings to processes using alternating (cyclic) horizontal splitting
+    // send rows to processes using alternating(cyclic) ribbon horizontal splitting
     if (rank == 0) {
         for (int _rank = 1; _rank < commSize; _rank++) {
             std::vector<double> _lM;
@@ -121,7 +121,7 @@ std::vector<double> gaussMethParallel(std::vector<double> M, const int n) {
 
     // The first stage
     for (int j = 0; j < n - 1; ++j) {
-        // find the local row where the elem in the leading col is the largest modulo and below the current leading row
+        // find the local rows where the elem in the leading col is the largest modulo and which is below the current leading row
         int lMaxRow = j;
         double lMax = (j % commSize == rank) ? fabs(lM[j + j / commSize * (n+1)]) : 0;
         for (int i = j + 1; i < n; ++i) {
@@ -132,7 +132,7 @@ std::vector<double> gaussMethParallel(std::vector<double> M, const int n) {
                 }
             }
         }
-        // find the global row
+        // find the global row among them
         int gMaxRow = 0;
         double gMax = 0;
         MPI_Allreduce(&lMax, &gMax, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
@@ -140,12 +140,12 @@ std::vector<double> gaussMethParallel(std::vector<double> M, const int n) {
         MPI_Allreduce(&lMaxRow, &gMaxRow, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);  // take the first matching row
 
         // swap with it
-        if (j % commSize == rank || gMaxRow % commSize == rank) {  // only for these two or this one rank
-            if (gMaxRow != j) {  // if current row isn't leading
-                if (gMaxRow % commSize == j % commSize) {  // if current leading row and true leading row are at the same rank
+        if (j % commSize == rank || gMaxRow % commSize == rank) {
+            if (gMaxRow != j) {  // if current leading row isn't true leading
+                if (gMaxRow % commSize == j % commSize) {  // if current leading row and true leading row are at the same process
                     for (int k = 0; k < n + 1; ++k)
                         std::swap(lM[k + j / commSize * (n+1)], lM[k + gMaxRow / commSize * (n+1)]);
-                } else {  // if current leading row and true leading row are at different ranks
+                } else {  // if current leading row and true leading row are at different processes
                     std::vector<double> tmpRow(n+1);
                     int li = 0, dest = 0;
                     if (j % commSize == rank) {
@@ -166,7 +166,7 @@ std::vector<double> gaussMethParallel(std::vector<double> M, const int n) {
         }
         // printVector(lM, "j=" + std::to_string(j) + "|" + std::to_string(rank) + ":lM=");
 
-        // send leading row to other ranks
+        // send leading row to other processes
         std::vector<double> leadRow(n+1);
         if (j % commSize == rank)
             for (int k = 0; k < n+1; ++k)
@@ -208,15 +208,15 @@ std::vector<double> gaussMethParallel(std::vector<double> M, const int n) {
             return std::vector<double>();
         MPI_Bcast(&leadx, 1, MPI_DOUBLE, i % commSize, MPI_COMM_WORLD);
 
-        if (rank == 0)
-            gx[i] = leadx;
-
-        // decrease all b[k] that are above the current row
+        // decrease all b[k] that are above the current row, based on calculated leadx
         for (int k = 0; k < lMSize / (n + 1); k++)
             if (k * commSize + rank < i)
                 lM[n + k * (n + 1)] -= lM[i + k * (n + 1)] * leadx;
             else
                 break;
+
+        if (rank == 0)
+            gx[i] = leadx;
     }
     return gx;
 }
