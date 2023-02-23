@@ -4,7 +4,7 @@
 #include "../../../modules/task_2/bataev_i_gauss_horizon/gauss_horizon.h"
 #include <gtest-mpi-listener.hpp>
 
-TEST(Vect_Alt_Signs_MPI, Test_Par_Count1) {
+TEST(Gauss_Horizon_MPI, Test_Par_Count1) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     const int n = 5;
@@ -37,7 +37,7 @@ TEST(Vect_Alt_Signs_MPI, Test_Par_Count1) {
     }
 }
 
-TEST(Vect_Alt_Signs_MPI, Test_Par_Count2) {
+TEST(Gauss_Horizon_MPI, Test_Par_Count2) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     const int n = 4;
@@ -69,7 +69,7 @@ TEST(Vect_Alt_Signs_MPI, Test_Par_Count2) {
     }
 }
 
-TEST(Vect_Alt_Signs_MPI, Test_Par_Count3) {
+TEST(Gauss_Horizon_MPI, Test_Par_Count3) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     const int n = 5, left = -50, right = 50;
@@ -92,7 +92,7 @@ TEST(Vect_Alt_Signs_MPI, Test_Par_Count3) {
     }
 }
 
-TEST(Vect_Alt_Signs_MPI, Test_Par_Count4) {
+TEST(Gauss_Horizon_MPI, Test_Par_Count4) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     const int n = 30, left = -50, right = 50;
@@ -110,7 +110,7 @@ TEST(Vect_Alt_Signs_MPI, Test_Par_Count4) {
     }
 }
 
-TEST(Vect_Alt_Signs_MPI, Test_Par_Count5) {
+TEST(Gauss_Horizon_MPI, Test_Par_Count5) {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     const int n = 100, left = -100, right = 100;
