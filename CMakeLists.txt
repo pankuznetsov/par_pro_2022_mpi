@@ -79,12 +79,6 @@ if( USE_TBB )
 endif( USE_TBB )
 
 ############################## CPPLINT ##############################
-find_package(Python3 REQUIRED)
-enable_testing()
-if( NOT (APPLE OR WIN32) )
-    include(cmake/Cpplint.cmake)
-    cpplint_add_subdirectory(modules)
-endif( NOT (APPLE OR WIN32) )
 
 ############################## Modules ##############################
 include_directories(3rdparty/unapproved)
